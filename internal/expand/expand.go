@@ -19,6 +19,7 @@ type ExpandResult struct {
 	NewRightBuffer string
 	CursorOffset   int
 	HasExpansion   bool
+	SetCursor      bool
 }
 
 type Expander struct {
@@ -55,12 +56,14 @@ func (e *Expander) Expand(req ExpandRequest) (*ExpandResult, error) {
 
 	newLeftBuffer := req.LeftBuffer[:wordStart] + expansion
 	cursorPos := len(newLeftBuffer)
+	setCursor := false
 
 	if abbr.Options != nil && abbr.Options.SetCursor {
 		if pos := strings.Index(expansion, "%"); pos != -1 {
 			expansion = strings.Replace(expansion, "%", "", 1)
 			newLeftBuffer = req.LeftBuffer[:wordStart] + expansion
 			cursorPos = wordStart + pos
+			setCursor = true
 		}
 	}
 
@@ -69,6 +72,7 @@ func (e *Expander) Expand(req ExpandRequest) (*ExpandResult, error) {
 		NewRightBuffer: req.RightBuffer,
 		CursorOffset:   cursorPos,
 		HasExpansion:   true,
+		SetCursor:      setCursor,
 	}, nil
 }
 

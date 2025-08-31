@@ -26,8 +26,12 @@ expand_abbr() {
     if [[ $exit_code -eq 0 && -n "$output" ]]; then
         # Expansion occurred - eval the output to set READLINE_LINE and READLINE_POINT
         eval "$output"
-        # Add the trigger character after expansion
-        if [[ -n "$add_char" ]]; then
+        # Check if SET_CURSOR is set (cursor position manually set)
+        if [[ "$output" == *"SET_CURSOR=1"* ]]; then
+            # Don't add trigger character when cursor is manually positioned
+            :
+        elif [[ -n "$add_char" ]]; then
+            # Add the trigger character after expansion
             READLINE_LINE="${READLINE_LINE:0:READLINE_POINT}${add_char}${READLINE_LINE:READLINE_POINT}"
             ((READLINE_POINT += ${#add_char}))
         fi
