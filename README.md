@@ -1,23 +1,30 @@
 # babbr
 
-Abbreviation extension plugin for bash that completely reproduces fish shell's abbr functionality.
+Fish shell-style abbreviations for bash - A tool that provides complete fish shell abbr functionality for bash.
 
 ## Features
 
-- **Basic abbreviations**: Simple alias-like expansions
-- **Global abbreviations**: Expand anywhere on the command line with `position: anywhere`  
-- **Context-aware abbreviations**: Expand only when used with specific commands (e.g., git)
-- **Regex-based abbreviations**: Pattern matching for file extensions and more
-- **Conditional abbreviations**: Expand only when certain conditions are met
-- **Dynamic evaluation**: Execute commands and insert their output
-- **Cursor positioning**: Place cursor at specific positions after expansion
-- **High performance**: Caching and optimized processing
-- **TDD development**: Comprehensive test coverage for reliability
+This tool reproduces fish shell's abbr functionality completely:
+
+- **Inline expansion**: Abbreviations expand in the command line before execution
+- **Visibility**: Users can see and edit the full command before execution
+- **History integrity**: Full commands are saved in bash history, not abbreviations
+- **Position control**: Abbreviations can be restricted to command position or allowed anywhere
+- **Command-specific**: Abbreviations can be limited to specific parent commands
+- **Conditional expansion**: Abbreviations can be enabled based on shell conditions (e.g., command existence)
+- **Regex support**: Pattern-based abbreviations using regular expressions
+- **Variable substitution**: Substitute named capture groups from regex patterns into snippets
+- **Cursor positioning**: Set cursor position after expansion using the `%` marker
 
 ## Installation
 
+Build from source:
+
 ```bash
-go install github.com/hagatasdelus/babbr@latest
+git clone https://github.com/hagatasdelus/babbr.git
+cd babbr
+go build -o babbr
+cp babbr ~/to/your/path/bin/  # Or any directory in your PATH
 ```
 
 Add the following line to your `~/.bashrc`:
@@ -57,7 +64,7 @@ Configuration can be done with a `config.yaml` file.
 
 Location of config.yaml is:
 
-* UNIX: `$XDG_CONFIG_HOME/babbr/config.yaml` or `$HOME/.config/babbr/config.yaml`
+- UNIX: `$XDG_CONFIG_HOME/babbr/config.yaml` or `$HOME/.config/babbr/config.yaml`
 
 ```yaml
 abbreviations:
@@ -89,8 +96,8 @@ abbreviations:
   # II. Global abbreviation (expanded anywhere on command line)
   # --------------------------------------------------------------------
   - name: Redirect stdout and stderr to /dev/null
-    abbr: 'null'
-    snippet: '>/dev/null 2>&1'
+    abbr: "null"
+    snippet: ">/dev/null 2>&1"
     options:
       # `position: anywhere` allows expansion anywhere in the row.
       position: anywhere
@@ -100,7 +107,7 @@ abbreviations:
 
   - name: Pipe to less
     abbr: L
-    snippet: '| less'
+    snippet: "| less"
     options:
       position: anywhere
     # Condition: Any position on the command line
@@ -145,7 +152,7 @@ abbreviations:
 
   - name: git add all
     abbr: a
-    snippet: 'add .'
+    snippet: "add ."
     options:
       position: anywhere
       command: git
@@ -155,7 +162,7 @@ abbreviations:
 
   - name: git push current branch to origin (dynamic)
     abbr: po
-    snippet: 'push origin $(git symbolic-ref --short HEAD)'
+    snippet: "push origin $(git symbolic-ref --short HEAD)"
     options:
       position: anywhere
       command: git
@@ -175,23 +182,23 @@ abbreviations:
     options:
       # This abbreviation is valid only if `condition` is true (the trash command is present).
       # The string is executed in a shell and the condition is determined by its success or failure (exit status).
-      condition: 'command -v trash &> /dev/null'
+      condition: "command -v trash &> /dev/null"
     # Condition: The `trash` command must be installed on the system.
     # Input: `del some_file.txt<Space>` or `del some_file.txt<CR>`
     # Expansion: `trash some_file.txt`
 
   - name: Fallback to interactive rm if trash-cli is not installed
     abbr: del
-    snippet: 'rm -i'
+    snippet: "rm -i"
     # Condition: If the `del` condition above is not satisfied (candidates with the same abbr are used here).
     # Input: `del some_file.txt<Space>` or `del some_file.txt<CR>`
     # Expansion: `rm -i some_file.txt`
 
   - name: Open file with VSCode if code command exists
     abbr: code
-    snippet: 'code .'
+    snippet: "code ."
     options:
-      condition: 'type code &> /dev/null'
+      condition: "type code &> /dev/null"
     # Condition: The `code` command must be installed on the system.
     # Input: `code<Space>` or `code<CR>`
     # Expansion: code .
@@ -201,7 +208,7 @@ abbreviations:
   # --------------------------------------------------------------------
   - name: Execute Python scripts with filename
     # The `$file` variable in the snippet is replaced by the value captured in options.regex.
-    snippet: 'python3 $file'
+    snippet: "python3 $file"
     options:
       # Matches words ending with `.py` and captures the entire word as `file`.
       regex: '^(?<file>\S+\.py)$'
@@ -212,7 +219,7 @@ abbreviations:
     # Expansion: `python3 myscript.py`
 
   - name: Execute shell scripts
-    snippet: 'bash %'
+    snippet: "bash $script"
     options:
       # Capture words ending in `.sh` with the name `script`.
       regex: '^(?<script>\S+\.sh)$'
@@ -222,7 +229,7 @@ abbreviations:
     # Expansion: `bash ./run.sh`
 
   - name: Unpack tar.gz files
-    snippet: 'tar -xzvf $archive'
+    snippet: "tar -xzvf $archive"
     options:
       # Capture words ending in `.tar.gz` with the name `archive`.
       regex: '^(?<archive>\S+\.tar\.gz)$'
