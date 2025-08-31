@@ -1,0 +1,46 @@
+package cmd
+
+import (
+	"fmt"
+
+	"github.com/hagatasdelus/babbr/internal/config"
+	"github.com/hagatasdelus/babbr/internal/expand"
+	"github.com/spf13/cobra"
+)
+
+var expandCmd = &cobra.Command{
+	Use:   "expand",
+	Short: "(Internal) Expand an abbreviation based on buffer content",
+	Long:  "Internal command used by the shell integration to expand abbreviations",
+	RunE: func(cmd *cobra.Command, args []string) error {
+		leftBuffer, _ := cmd.Flags().GetString("lbuffer")
+		rightBuffer, _ := cmd.Flags().GetString("rbuffer")
+
+		cfg, err := config.LoadConfig()
+		if err != nil {
+			return fmt.Errorf("failed to load config: %w", err)
+		}
+
+		expander := expand.NewExpander(cfg)
+		result, err := expander.Expand(expand.ExpandRequest{
+			LeftBuffer:  leftBuffer,
+			RightBuffer: rightBuffer,
+		})
+		if err != nil {
+			return fmt.Errorf("failed to expand: %w", err)
+		}
+
+		if result.HasExpansion {
+			fmt.Printf("READLINE_LINE=%q\n", result.NewLeftBuffer+result.NewRightBuffer)
+			fmt.Printf("READLINE_POINT=%d\n", result.CursorOffset)
+		}
+
+		return nil
+	},
+}
+
+func init() {
+	expandCmd.Flags().String("lbuffer", "", "Left buffer content")
+	expandCmd.Flags().String("rbuffer", "", "Right buffer content")
+	rootCmd.AddCommand(expandCmd)
+}
