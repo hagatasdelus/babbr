@@ -112,7 +112,11 @@ func (e *Expander) matchesAbbreviation(abbr *config.Abbreviation, word, commandL
 		if err != nil {
 			return false
 		}
-		return re.MatchString(word)
+		if !re.MatchString(word) {
+			return false
+		}
+		// For regex-based abbreviations, also check position
+		return e.isValidPosition(abbr, commandLine, word)
 	}
 
 	if abbr.Abbr != word {
@@ -191,6 +195,7 @@ func (e *Expander) checkCondition(condition string) bool {
 func (e *Expander) processSnippet(abbr *config.Abbreviation, word string) (string, error) {
 	snippet := abbr.Snippet
 
+	// Handle regex-based variable substitution
 	if abbr.Options != nil && abbr.Options.Regex != "" && abbr.Options.Evaluate {
 		re, err := regexp.Compile(abbr.Options.Regex)
 		if err != nil {
@@ -208,13 +213,17 @@ func (e *Expander) processSnippet(abbr *config.Abbreviation, word string) (strin
 		}
 	}
 
-	if abbr.Options != nil && abbr.Options.Evaluate {
-		cmd := exec.Command("bash", "-c", snippet)
-		output, err := cmd.Output()
-		if err != nil {
-			return snippet, nil
+	// Handle command substitution ($(command)) when evaluate is true and no regex
+	if abbr.Options != nil && abbr.Options.Evaluate && abbr.Options.Regex == "" {
+		// Check if snippet contains command substitution pattern
+		if strings.Contains(snippet, "$(") && strings.Contains(snippet, ")") {
+			cmd := exec.Command("bash", "-c", snippet)
+			output, err := cmd.Output()
+			if err != nil {
+				return snippet, nil
+			}
+			return strings.TrimSpace(string(output)), nil
 		}
-		return strings.TrimSpace(string(output)), nil
 	}
 
 	return snippet, nil
