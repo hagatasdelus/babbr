@@ -8,6 +8,7 @@ import (
 )
 
 func main() {
+	cmd.SetVersion(version)
 	if err := cmd.GetRootCmd().Execute(); err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
 		os.Exit(1)
