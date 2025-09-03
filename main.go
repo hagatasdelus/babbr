@@ -7,6 +7,8 @@ import (
 	"github.com/hagatasdelus/babbr/internal/cmd"
 )
 
+const version = "0.0.1"
+
 func main() {
 	cmd.SetVersion(version)
 	if err := cmd.GetRootCmd().Execute(); err != nil {
