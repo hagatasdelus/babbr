@@ -39,11 +39,19 @@ __babbr_handle_space() {
     local word_before_cursor="${line_before_cursor##*[( ]}"
     
     # Skip expansion for obviously non-expandable patterns
-    if [[ -z "$word_before_cursor" ]] || \
-       [[ ${#word_before_cursor} -gt 30 ]] || \
-       [[ "$word_before_cursor" =~ ^[0-9]+$ ]] || \
-       [[ "$word_before_cursor" =~ ^--.*$ ]] || \
-       [[ "$word_before_cursor" =~ ^\$.*$ ]]; then
+    if 
+        # Early return for empty word
+        [[ -z "$word_before_cursor" ]] || \
+        # Skip overly long words
+        [[ ${#word_before_cursor} -gt 30 ]] || \
+        # Skip obvious path patterns
+        [[ "$word_before_cursor" =~ ^\.\.?/.*$ ]] || \
+        [[ "$word_before_cursor" =~ ^(/|~)[^[:space:]]+/.*$ ]] || \
+        # Skip pure numbers and version patterns
+        [[ "$word_before_cursor" =~ ^[0-9]+(\.[0-9]+){0,2}$ ]] || \
+        # Skip common command-line patterns
+        [[ "$word_before_cursor" =~ ^((--.*)|(-[a-zA-Z]+)|(\$.*))$ ]];
+    then
         READLINE_LINE="${READLINE_LINE:0:READLINE_POINT} ${READLINE_LINE:READLINE_POINT}"
         ((READLINE_POINT++))
     else
