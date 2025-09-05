@@ -1,0 +1,33 @@
+---
+version: "2"
+
+run:
+  timeout: 2m
+  
+output:
+  formats:
+    - format: colored-line-number
+
+linters:
+  disable-all: true
+  enable:
+    - errcheck
+    - govet
+    - staticcheck
+    - typecheck
+    - unused
+    - unparam
+    - ineffassign
+    - misspell
+
+linters-settings:
+  goimports:
+    local-prefixes: github.com/hagatasdelus/babbr
+
+issues:
+  max-issues-per-linter: 0
+  max-same-issues: 0
+  exclude-rules:
+    - path: "internal/cmd/.*\\.go"
+      linters:
+        - unparam
