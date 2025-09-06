@@ -1,33 +1,45 @@
----
 version: "2"
-
 run:
   timeout: 2m
-  
-output:
-  formats:
-    - format: colored-line-number
-
 linters:
   disable-all: true
   enable:
     - errcheck
     - govet
+    - dogsled
+    - gocritic
     - staticcheck
-    - typecheck
     - unused
     - unparam
     - ineffassign
     - misspell
-
-linters-settings:
-  goimports:
-    local-prefixes: github.com/hagatasdelus/babbr
-
+  exclusions:
+    generated: lax
+    presets:
+      - comments
+      - std-error-handling
+      - common-false-positives
+      - legacy
+    paths:
+      - third_party$
+      - builtin$
+      - examples$
+    rules:
+      - path: "internal/cmd/.*\\.go"
+        linters:
+          - unparam
 issues:
-  max-issues-per-linter: 0
   max-same-issues: 0
-  exclude-rules:
-    - path: "internal/cmd/.*\\.go"
-      linters:
-        - unparam
+formatters:
+  enable:
+    - gofmt
+    - goimports
+  settings:
+    goimports:
+      local-prefixes: github.com/hagatasdelus/babbr
+  exclusions:
+    generated: lax
+    paths:
+      - third_party$
+      - builtin$
+      - examples$
