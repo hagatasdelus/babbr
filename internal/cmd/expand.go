@@ -3,9 +3,10 @@ package cmd
 import (
 	"fmt"
 
+	"github.com/spf13/cobra"
+
 	"github.com/hagatasdelus/babbr/internal/config"
 	"github.com/hagatasdelus/babbr/internal/expand"
-	"github.com/spf13/cobra"
 )
 
 var expandCmd = &cobra.Command{
