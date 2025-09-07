@@ -40,9 +40,6 @@ __babbr_handle_space() {
     if 
         [[ -z "$word_before_cursor" ]] || \
         [[ ${#word_before_cursor} -gt 30 ]] || \
-        [[ "$word_before_cursor" =~ ^\.\.?/.*$ ]] || \
-        [[ "$word_before_cursor" =~ ^(/|~)[^[:space:]]+/.*$ ]] || \
-        [[ "$word_before_cursor" =~ ^[0-9]+(\.[0-9]+){0,2}$ ]] || \
         [[ "$word_before_cursor" =~ ^((--.*)|(-[a-zA-Z]+)|(\$.*))$ ]];
     then
         READLINE_LINE="${READLINE_LINE:0:READLINE_POINT} ${READLINE_LINE:READLINE_POINT}"

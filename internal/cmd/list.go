@@ -3,8 +3,9 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/hagatasdelus/babbr/internal/config"
 	"github.com/spf13/cobra"
+
+	"github.com/hagatasdelus/babbr/internal/config"
 )
 
 var listCmd = &cobra.Command{
