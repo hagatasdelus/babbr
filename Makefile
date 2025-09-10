@@ -32,6 +32,7 @@ $(GOBIN)/goxz:
 .PHONY: test
 test: build
 	go test -v ./...
+	./test/integration_test.bash
 
 .PHONY: clean
 clean:
