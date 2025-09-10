@@ -2,6 +2,7 @@
 
 failed=0
 
+export XDG_CONFIG_HOME="$(pwd)/test/"
 export USERNAME="BABBR"
 export ABBREV_MODE="DEBUG"
 export LONG_PATH="$HOME/some/really/long/path/to/directory"
