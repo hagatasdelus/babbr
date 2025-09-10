@@ -1,0 +1,84 @@
+  - name: list files with details
+    abbr: l
+    snippet: ls -l
+
+  - name: list all files with details
+    abbr: la
+    snippet: ls -la
+
+  - name: clear screen
+    abbr: cls
+    snippet: clear
+
+  - name: git status (standalone command)
+    abbr: gst
+    snippet: git status
+
+  - name: Pipe to less
+    abbr: L
+    snippet: "| less"
+    options:
+      position: anywhere
+
+  - name: git status
+    abbr: s
+    snippet: status
+    options:
+      position: anywhere
+      command: git
+
+  - name: git commit
+    abbr: c
+    snippet: commit
+    options:
+      position: anywhere
+      command: git
+
+  - name: git add all
+    abbr: a
+    snippet: "add ."
+    options:
+      position: anywhere
+      command: git
+
+  - name: git push current branch to origin (dynamic)
+    abbr: po
+    snippet: "push origin $(git symbolic-ref --short HEAD)"
+    options:
+      position: anywhere
+      command: git
+      evaluate: true
+
+  - name: Use trash-cli if available
+    abbr: del
+    snippet: trash
+    options:
+      condition: "command -v trash &> /dev/null"
+
+  - name: Fallback to interactive rm if trash-cli is not installed
+    abbr: del
+    snippet: "rm -i"
+
+  - name: Open file with VSCode if code command exists
+    abbr: code
+    snippet: "code ."
+    options:
+      condition: type code &> /dev/null
+
+  - name: Open file with VSCode if code command exists
+    abbr: xyz
+    snippet: "xyz ."
+    options:
+      condition: type xyz &> /dev/null
+
+  - name: Execute shell scripts
+    snippet: bash $script
+    options:
+      regex: ^(?<script>\S+\.sh)$
+      evaluate: true
+
+  - name: Unpack tar.gz files
+    snippet: tar -xzvf $archive
+    options:
+      regex: ^(?<archive>\S+\.tar\.gz)$
+      evaluate: true
