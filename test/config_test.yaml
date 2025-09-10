@@ -1,0 +1,98 @@
+abbreviations:
+  - name: git
+    abbr: g
+    snippet: git
+
+  - name: Pipe to less
+    abbr: L
+    snippet: "| less"
+    options:
+      position: anywhere
+
+  - name: welcome message
+    abbr: welcome
+    snippet: "echo 'Hello, ${USERNAME}! Welcome back.'"
+    options:
+      evaluate: true
+      position: command
+
+  - name: insert date
+    abbr: calc
+    snippet: "3 * 4 * 5 = $(echo $((3*4*5)))"
+    options:
+      position: anywhere
+      evaluate: true
+
+  - name: git status
+    abbr: s
+    snippet: status
+    options:
+      position: anywhere
+      command: git
+
+  - name: git commit with message
+    abbr: cm
+    snippet: commit -m '%'
+    options:
+      position: anywhere
+      command: git
+      set_cursor: true
+
+  - name: docker compose build no-cache
+    abbr: bnc
+    snippet: build --no-cache
+    options:
+      position: anywhere
+      command: docker compose
+
+  - name: edit /etc/shells
+    snippet: sudo $cmd
+    options:
+      regex: '^(?<cmd>vim\s+/etc/shells)$'
+      evaluate: true
+
+  - name: "../ ../../ etc."
+    snippet: cd $abbr
+    options:
+      regex: '^(?<abbr>(\.\./)+)$'
+      evaluate: true
+  
+  - name: conditional debug log
+    abbr: log
+    snippet: "echo '[DEBUG] Log message here'"
+    options:
+      condition: 'test "$ABBREV_MODE" = "DEBUG" > /dev/null 2>&1'
+
+  - name: conditional user log
+    abbr: log-user
+    snippet: 'This should not expand in DEBUG mode'
+    options:
+      condition: 'test "$ABBREV_MODE" = "USER" > /dev/null 2>&1'
+
+  - name: Use trashtest-cli if available
+    abbr: del
+    snippet: trashtest
+    options:
+      condition: "command -v trashtest &> /dev/null"
+
+  - name: Fallback to interactive rm if trashtest-cli is not installed
+    abbr: del
+    snippet: "rm -i"
+
+  - name: ".ts file execution"
+    snippet: deno run -A $file
+    options:
+      regex: '^(?<file>\S+\.ts)$'
+      evaluate: true
+
+  - name: print Nth field
+    snippet: awk '{ print \$$num }'
+    options:
+      regex: ^p(?<num>\d+)$
+      evaluate: true
+
+  - name: long path directory change
+    abbr: long
+    snippet: cd ${LONG_PATH}
+    options:
+      evaluate: true
