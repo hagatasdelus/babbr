@@ -35,7 +35,8 @@ formatters:
     - goimports
   settings:
     goimports:
-      local-prefixes: github.com/hagatasdelus/babbr
+      local-prefixes:
+        - github.com/hagatasdelus/babbr
   exclusions:
     generated: lax
     paths:
