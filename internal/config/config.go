@@ -48,19 +48,6 @@ func LoadConfig() (*Config, error) {
 }
 
 func findConfigFile() (string, error) {
-	wd, err := os.Getwd()
-	if err != nil {
-		return "", fmt.Errorf("failed to get current working directory: %w", err)
-	}
-
-	for wd != "/" {
-		configPath := filepath.Join(wd, "config", "config.yaml")
-		if _, err := os.Stat(configPath); err == nil {
-			return configPath, nil
-		}
-		wd = filepath.Dir(wd)
-	}
-
 	configDir := os.Getenv("XDG_CONFIG_HOME")
 	if configDir == "" {
 		homeDir, err := os.UserHomeDir()
