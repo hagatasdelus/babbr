@@ -7,6 +7,17 @@ export USERNAME="BABBR"
 export ABBREV_MODE="DEBUG"
 export LONG_PATH="$HOME/some/really/long/path/to/directory"
 
+IS_WINDOWS=false
+if [[ "$(uname -s)" == *"MINGW"* || "$(uname -s)" == *"MSYS"* || "$(uname -s)" == *"CYGWIN"* ]]; then
+    IS_WINDOWS=true
+fi
+
+LONG_PATH_EXPECTED="cd $HOME/some/really/long/path/to/directory"
+if [ "$IS_WINDOWS" = true ]; then
+    LONG_PATH_EXPECTED="cd $(cygpath -w "$HOME")/some/really/long/path/to/directory"
+    LONG_PATH_EXPECTED="${LONG_PATH_EXPECTED//\\//}"
+fi
+
 expand_test() {
     local lbuffer="$1"
     local rbuffer="$2"
@@ -77,7 +88,7 @@ expand_test "log"                   ""          "echo '[DEBUG] Log message here'
 expand_test "log-user"              ""          "log-user"                              ""
 expand_test "del"                   ""          "rm -i"    ""
 expand_test "ls -l | p2"            ""          "ls -l | awk '{ print \$2 }'"           ""
-expand_test "long"                  ""          "cd $HOME/some/really/long/path/to/directory"  ""
+expand_test "long"                  ""          "${LONG_PATH_EXPECTED}"                 ""
 
 if [ "$failed" -ne 0 ]; then
     echo "❎ ${failed} Test Failed!" >&2
