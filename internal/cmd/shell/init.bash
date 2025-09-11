@@ -40,7 +40,7 @@ __babbr_handle_space() {
     if 
         [[ -z "$word_before_cursor" ]] || \
         [[ ${#word_before_cursor} -gt 30 ]] || \
-        [[ "$word_before_cursor" =~ ^((--.*)|(-[a-zA-Z]+)|(\$.*))$ ]];
+        [[ "$word_before_cursor" =~ ^(\$.*)$ ]];
     then
         READLINE_LINE="${READLINE_LINE:0:READLINE_POINT} ${READLINE_LINE:READLINE_POINT}"
         ((READLINE_POINT++))

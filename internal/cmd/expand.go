@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/spf13/cobra"
 
@@ -31,12 +32,12 @@ var expandCmd = &cobra.Command{
 			return fmt.Errorf("failed to expand: %w", err)
 		}
 
-		if result.HasExpansion {
-			fmt.Printf("READLINE_LINE=%q\n", result.NewLeftBuffer+result.NewRightBuffer)
-			fmt.Printf("READLINE_POINT=%d\n", result.CursorOffset)
-			if result.SetCursor {
-				fmt.Printf("SET_CURSOR=1\n")
-			}
+		fullLine := result.NewLeftBuffer + result.NewRightBuffer
+		safeFullLine := strings.ReplaceAll(fullLine, "'", "'\"'\"'")
+		fmt.Printf("READLINE_LINE='%s'\n", safeFullLine)
+		fmt.Printf("READLINE_POINT=%d\n", result.CursorOffset)
+		if result.SetCursor {
+			fmt.Printf("SET_CURSOR=1\n")
 		}
 
 		return nil
