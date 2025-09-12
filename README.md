@@ -2,12 +2,9 @@
 
 [![Actions Status](https://github.com/hagatasdelus/babbr/workflows/CI/gadge.svg)](https://github.com/hagatasdelus/babbr/actions)
 
-Fish shell-style abbreviations for bash.
-A tool that provides fish shell abbr functionality for bash.
+Fish shell-style abbreviations for bash, providing an experience inspired by fish's abbr functionality.
 
 ## Installation
-
-Build from source:
 
 ```bash
 go install github.com/hagatasdelus/babbr@latest
@@ -21,9 +18,17 @@ eval "$(babbr init)"
 
 ## Usage
 
+> **Note**
+> A minor visual flicker may occur during abbreviation expansion. This is a known limitation of the `bind -x` macro within Bash's readline library.  This behavior does not impact the functionality of the tool.
+
 ### Configuration
 
 Configuration can be done with a `config.yaml` file.
+You can see all currently defined abbreviations by running.
+
+```bash
+babbr list
+```
 
 ### Example for config.yaml
 
@@ -142,22 +147,39 @@ abbreviations:
       evaluate: true
 ```
 
-> **Note**
-> A minor visual flicker may occur during abbreviation expansion. This is a known limitation of the bind -x macro within Bash's readline library.  This behavior does not impact the functionality of the tool.
+## Configuration Reference
+
+The following keys can be used in your `config.yaml` to define an abbreviation.
+
+  * `name`: A brief, human-readable description of what the abbreviation does.
+  * `abbr`: The short word to be typed that will trigger the expansion.
+  * `snippet`: The text that will replace the `abbr` when it is expanded.
+  * `options`: A block of advanced configuration keys for more specific behavior.
+      * `position`: Controls where the abbreviation can be expanded.
+          * `command` (default): Only expands when the `abbr` is the first word on the command line.
+          * `anywhere`: Allows expansion at any point on the command line.
+      * `command`: Restricts the abbreviation to only expand when it appears as an argument to a specific command.
+      * `condition`: A shell command that is executed to determine if the abbreviation should be active. The abbreviation is only enabled if the command exits with a status of 0 (success).
+      * `regex`: A regular expression that serves as the trigger instead of a fixed `abbr` string. This is useful for creating "suffix aliases" that act on patterns, like file extensions.
+      * `evaluate`: Enables dynamic features in the `snippet`.
+          * When used with `regex`, it substitutes named capture groups (e.g., `(?<name>...)`) from the regex into variables in the snippet (e.g., `$name`).
+          * When used without `regex`, it allows for shell command substitution (e.g., `$(...))`) within the snippet to be evaluated by the shell.
+      * `set_cursor`: A boolean (`true`/`false`). If true, the cursor will be moved to the position of the `%` character in the snippet after expansion. The `%` character is then removed.
 
 ## Features
 
-This tool reproduces fish shell's abbr functionality completely:
+This tool brings a fish shell-inspired `abbr` experience to bash, including key features like:
 
-- **Inline expansion**: Abbreviations expand in the command line before execution
-- **Visibility**: Users can see and edit the full command before execution
-- **History integrity**: Full commands are saved in bash history, not abbreviations
-- **Position control**: Abbreviations can be restricted to command position or allowed anywhere
-- **Command-specific**: Abbreviations can be limited to specific parent commands
-- **Conditional expansion**: Abbreviations can be enabled based on shell conditions (e.g., command existence)
-- **Regex support**: Pattern-based abbreviations using regular expressions
-- **Variable substitution**: Substitute named capture groups from regex patterns into snippets
-- **Cursor positioning**: Set cursor position after expansion using the `%` marker
+| Feature                  | Description                                                     |
+| ------------------------ | --------------------------------------------------------------- |
+| **Inline expansion** | Abbreviations expand in the command line before you run the command. |
+| **Visibility** | You can see and edit the full command before execution. |
+| **History integrity** | Your shell history saves the expanded commands, not the abbreviations. |
+| **Position control** | You can restrict abbreviations to the command position or allow them anywhere on the line. |
+| **Command-specific** | Abbreviations can be set to expand only as arguments for a specific command (e.g., `git`). |
+| **Conditional expansion** | You can enable abbreviations based on shell conditions, such as checking if a command exists. |
+| **Cursor positioning** | You can set the cursor's position after an expansion using a `%` marker in the snippet. |
+| **Regex-powered snippets** | You can use regular expressions to trigger abbreviations, primarily to substitute named capture groups. |
 
 ## License
 
