@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"runtime"
 
 	"gopkg.in/yaml.v3"
 )
@@ -48,19 +49,34 @@ func LoadConfig() (*Config, error) {
 }
 
 func findConfigFile() (string, error) {
-	configDir := os.Getenv("XDG_CONFIG_HOME")
-	if configDir == "" {
-		homeDir, err := os.UserHomeDir()
-		if err != nil {
-			return "", fmt.Errorf("failed to get home directory: %w", err)
+	var configHome string
+
+	if runtime.GOOS == "windows" {
+		configHome = os.Getenv("APPDATA")
+	} else {
+		configHome = os.Getenv("XDG_CONFIG_HOME")
+		if configHome == "" {
+			homeDir, err := os.UserHomeDir()
+			if err != nil {
+				return "", fmt.Errorf("failed to get home directory: %w", err)
+			}
+			configHome = filepath.Join(homeDir, ".config")
 		}
-		configDir = filepath.Join(homeDir, ".config")
 	}
 
-	userConfigPath := filepath.Join(configDir, "babbr", "config.yaml")
+	if configHome == "" {
+		return "", fmt.Errorf("could not determine config directory")
+	}
+
+	dir := filepath.Join(configHome, "babbr")
+	if err := os.MkdirAll(dir, 0o700); err != nil {
+		return "", fmt.Errorf("failed to create config directory %s: %w", dir, err)
+	}
+
+	userConfigPath := filepath.Join(dir, "config.yaml")
 	if _, err := os.Stat(userConfigPath); err == nil {
 		return userConfigPath, nil
 	}
 
-	return "", fmt.Errorf("config file not found in project directory or user config directory")
+	return "", fmt.Errorf("config file not found in config directory %s", dir)
 }
