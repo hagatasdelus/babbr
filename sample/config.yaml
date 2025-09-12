@@ -1,3 +1,4 @@
+abbreviations:
   - name: list files with details
     abbr: l
     snippet: ls -l
@@ -10,9 +11,12 @@
     abbr: cls
     snippet: clear
 
-  - name: git status (standalone command)
-    abbr: gst
-    snippet: git status
+  - abbr: am
+    snippet: -a -m '%'
+    options:
+      position: anywhere
+      set_cursor: true
+      command: git commit
 
   - name: Pipe to less
     abbr: L
@@ -64,12 +68,6 @@
     snippet: "code ."
     options:
       condition: type code &> /dev/null
-
-  - name: Open file with VSCode if code command exists
-    abbr: xyz
-    snippet: "xyz ."
-    options:
-      condition: type xyz &> /dev/null
 
   - name: Execute shell scripts
     snippet: bash $script
