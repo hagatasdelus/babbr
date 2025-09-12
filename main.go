@@ -7,7 +7,7 @@ import (
 	"github.com/hagatasdelus/babbr/internal/cmd"
 )
 
-const version = "0.0.1"
+const version = "0.0.0"
 
 func main() {
 	cmd.SetVersion(version)

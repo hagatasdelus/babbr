@@ -2,15 +2,20 @@
 
 failed=0
 
-export XDG_CONFIG_HOME="$(pwd)/test/"
-export USERNAME="BABBR"
-export ABBREV_MODE="DEBUG"
-export LONG_PATH="$HOME/some/really/long/path/to/directory"
-
 IS_WINDOWS=false
 if [[ "$(uname -s)" == *"MINGW"* || "$(uname -s)" == *"MSYS"* || "$(uname -s)" == *"CYGWIN"* ]]; then
     IS_WINDOWS=true
 fi
+
+if [ "$IS_WINDOWS" = true ]; then
+    export APPDATA="$(pwd)/test/"
+else
+    export XDG_CONFIG_HOME="$(pwd)/test/"
+fi
+
+export USERNAME="BABBR"
+export ABBREV_MODE="DEBUG"
+export LONG_PATH="$HOME/some/really/long/path/to/directory"
 
 LONG_PATH_EXPECTED="cd $HOME/some/really/long/path/to/directory"
 if [ "$IS_WINDOWS" = true ]; then
@@ -59,36 +64,40 @@ expand_test() {
     echo "  (expected: '$expected_rbuffer', actual: '$RBUFFER')"
 }
 
-expand_test "g"                     ""          "git"                                   ""
-expand_test "  g"                   ""          "  git"                                 ""
-expand_test "g"                     "add"       "git"                                   "add"
-expand_test "g"                     " add"      "git"                                   " add"
-expand_test "echo g"                ""          "echo g"                                ""
-expand_test "echo test; g"          ""          "echo test; git"                        ""
-expand_test "echo TEST && git s"    ""          "echo TEST && git status"               ""
-expand_test "cat test.txt L"        ""          "cat test.txt | less"                   ""
-expand_test "welcome"               ""          "echo 'Hello, BABBR! Welcome back.'"    ""
-expand_test "echo calc"             ""          "echo 3 * 4 * 5 = 60"                   ""
-expand_test "calc"                  ""          "3 * 4 * 5 = 60"                        ""
-expand_test "git s"                 ""          "git status"                            ""
-expand_test "hg s"                  ""          "hg s"                                  ""
-expand_test "echo docker RMI"       ""          "echo docker RMI"                       ""
-expand_test "git cm"                ""          "git commit -m '"                       "'"
-expand_test "git cm"                " -v"       "git commit -m '"                       "' -v"
-expand_test "docker compose bnc"    ""          "docker compose build --no-cache"       ""
-expand_test "vim /etc/shells"       ""          "sudo vim /etc/shells"                  ""
-expand_test "../"                   ""          "cd ../"                                ""
-expand_test "../../"                ""          "cd ../../"                             ""
-expand_test "../../../"             ""          "cd ../../../"                          ""
-expand_test "test.ts"               ""          "deno run -A test.ts"                   ""
-expand_test "echo Test | ./test.ts" ""          "echo Test | deno run -A ./test.ts"     ""
-expand_test "deno run test.ts"      ""          "deno run test.ts"                      ""
-expand_test "test.tsx"              ""          "test.tsx"                              ""
-expand_test "log"                   ""          "echo '[DEBUG] Log message here'"       ""
-expand_test "log-user"              ""          "log-user"                              ""
-expand_test "del"                   ""          "rm -i"    ""
-expand_test "ls -l | p2"            ""          "ls -l | awk '{ print \$2 }'"           ""
-expand_test "long"                  ""          "${LONG_PATH_EXPECTED}"                 ""
+expand_test "g"                         ""          "git"                                   ""
+expand_test "  g"                       ""          "  git"                                 ""
+expand_test "g"                         "add"       "git"                                   "add"
+expand_test "g"                         " add"      "git"                                   " add"
+expand_test "echo g"                    ""          "echo g"                                ""
+expand_test "echo test; g"              ""          "echo test; git"                        ""
+expand_test "echo TEST && git s"        ""          "echo TEST && git status"               ""
+expand_test "cat test.txt L"            ""          "cat test.txt | less"                   ""
+expand_test "welcome"                   ""          "echo 'Hello, BABBR! Welcome back.'"    ""
+expand_test "echo calc"                 ""          "echo 3 * 4 * 5 = 60"                   ""
+expand_test "calc"                      ""          "3 * 4 * 5 = 60"                        ""
+expand_test "git s"                     ""          "git status"                            ""
+expand_test "hg s"                      ""          "hg s"                                  ""
+expand_test "echo git s"                ""          "echo git s"                            ""
+expand_test "git help s"                ""          "git help status"                       ""
+expand_test "git cm"                    ""          "git commit -m '"                       "'"
+expand_test "git cm"                    " -v"       "git commit -m '"                       "' -v"
+expand_test "docker compose bnc"        ""          "docker compose build --no-cache"       ""
+expand_test "echo docker compose bnc"   ""          "echo docker compose bnc"               ""
+expand_test "docker echo compose bnc"   ""          "docker echo compose bnc"               ""
+expand_test "docker compose echo bnc"   ""          "docker compose echo build --no-cache"  ""
+expand_test "vim /etc/shells"           ""          "sudo vim /etc/shells"                  ""
+expand_test "../"                       ""          "cd ../"                                ""
+expand_test "../../"                    ""          "cd ../../"                             ""
+expand_test "../../../"                 ""          "cd ../../../"                          ""
+expand_test "test.ts"                   ""          "deno run -A test.ts"                   ""
+expand_test "echo Test | ./test.ts"     ""          "echo Test | deno run -A ./test.ts"     ""
+expand_test "deno run test.ts"          ""          "deno run test.ts"                      ""
+expand_test "test.tsx"                  ""          "test.tsx"                              ""
+expand_test "log"                       ""          "echo '[DEBUG] Log message here'"       ""
+expand_test "log-user"                  ""          "log-user"                              ""
+expand_test "del"                       ""          "rm -i"    ""
+expand_test "ls -l | p2"                ""          "ls -l | awk '{ print \$2 }'"           ""
+expand_test "long"                      ""          "${LONG_PATH_EXPECTED}"                 ""
 
 if [ "$failed" -ne 0 ]; then
     echo "❎ ${failed} Test Failed!" >&2
