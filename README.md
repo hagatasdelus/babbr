@@ -1,6 +1,6 @@
 # babbr
 
-[![Actions Status](https://github.com/hagatasdelus/babbr/workflows/CI/gadge.svg)](https://github.com/hagatasdelus/babbr/actions)
+[![CI](https://github.com/hagatasdelus/babbr/actions/workflows/ci.yml/badge.svg)](https://github.com/hagatasdelus/babbr/actions)
 
 Fish shell-style abbreviations for bash, providing an experience inspired by fish's abbr functionality.
 
@@ -24,6 +24,7 @@ eval "$(babbr init)"
 ### Configuration
 
 Configuration can be done with a `config.yaml` file.
+
 You can see all currently defined abbreviations by running.
 
 ```bash
